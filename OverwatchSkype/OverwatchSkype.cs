@@ -7,27 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SKYPE4COMLib;
 using System.IO;
+using NAudio.Wave;
 
 namespace OverwatchSkype
 {
     public partial class OverwatchSkype : Form
     {
-        private Skype client = new Skype();
-        private Call currentCall = null;
-
         public OverwatchSkype()
         {
             InitializeComponent();
 
-            try
+            int waveInDevices = WaveIn.DeviceCount;
+            for (int waveInDevice = 0; waveInDevice < waveInDevices; waveInDevice++)
             {
-                client.Attach(5, true);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Failed To Connect!", "Message");
+                WaveInCapabilities deviceInfo = WaveIn.GetCapabilities(waveInDevice);
+                selDevice.Items.Add(deviceInfo.ProductName);
+                if (deviceInfo.ProductName.StartsWith("VoiceMeeter"))
+                    selDevice.SelectedIndex = selDevice.Items.Count - 1;
             }
 
             DirectoryInfo dir = new DirectoryInfo("sounds");
@@ -38,7 +35,7 @@ namespace OverwatchSkype
                 int row = count / 4;
                 int col = count % 4;
                 int x = col * 85;
-                int y = row * 35;
+                int y = row * 35 + 25;
                 Button b = new Button();
                 b.Width = 80;
                 b.Height = 30;
@@ -47,20 +44,20 @@ namespace OverwatchSkype
                 b.Click += (s, e) => PlaySound(file.FullName);
                 this.Controls.Add(b);
                 count++;
-                Console.Write(row + " " + col + "\n");
                 if (row > rows)
                     rows = row;
             }
 
-            this.ClientSize = new Size(4 * 85 - 5, (rows + 1) * 35 - 5);
+            this.ClientSize = new Size(4 * 85 - 5, (rows + 1) * 35 - 5 + 25);
         }
 
         private void PlaySound(string file)
         {
-            currentCall = client.ActiveCalls[1];
-            currentCall.set_InputDevice(TCallIoDeviceType.callIoDeviceTypeFile, file);
-            System.Threading.Thread.Sleep(5000);
-            currentCall.set_InputDevice(TCallIoDeviceType.callIoDeviceTypeFile, "");
+            var waveOut = new NAudio.Wave.WaveOut();
+            waveOut.DeviceNumber = selDevice.SelectedIndex;
+
+            waveOut.Init(new NAudio.Wave.WaveFileReader(file));
+            waveOut.Play();
         }
     }
 }

@@ -29,13 +29,23 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OverwatchSkype));
+            this.selDevice = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
+            // 
+            // selDevice
+            // 
+            this.selDevice.FormattingEnabled = true;
+            this.selDevice.Location = new System.Drawing.Point(3, 2);
+            this.selDevice.Name = "selDevice";
+            this.selDevice.Size = new System.Drawing.Size(330, 21);
+            this.selDevice.TabIndex = 0;
             // 
             // OverwatchSkype
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(337, 138);
+            this.Controls.Add(this.selDevice);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -47,6 +57,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.ComboBox selDevice;
 
     }
 }
